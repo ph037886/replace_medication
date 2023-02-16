@@ -29,17 +29,20 @@ def keyword_find(keyword):
     return result
 
 def search_event(keyword):
-    global result_egname_list
+    global result_egname_list,search_result_container,final_result_container
+    search_result_container.empty()
+    final_result_container.empty()
     result=keyword_find(keyword)
     if len(result)==0:
         #print('查無資料')
-        st.write('查無資料')
+        search_result_container.write('查無資料')
     elif len(result)==1:
         #print('只有一筆，直接查類似藥物')
         final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
         for atc, df in final_dict.items():
-            st.header(atc)
-            df
+            final_result_container.header(atc)
+            final_result_container.dataframe(df)
+        final_result_container.markdown("""---""")
     elif len(result)>1:
         #print('多筆藥物，再做其他選擇')
         #result=result..drop_duplicates(subset=['商品名'])
@@ -47,16 +50,20 @@ def search_event(keyword):
         result_chname_list=result['學名'].to_list()
         #st.button('nothing',on_click=test())
         for i in range(len(result_egname_list)):
-            locals()['number'+str(i)] =st.sidebar.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
+            locals()['number'+str(i)] =search_result_container.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
+        search_result_container.markdown("""---""")
         
 def choose_medication_event(args):
-    st.title(result_egname_list[args])
+    global final_result_container
+    final_result_container.empty()
+    final_result_container.header(result_egname_list[args])
     result=keyword_find(keyword)
     result=result[args:args+1]
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     for atc, df in final_dict.items():
-        st.header(atc)
-        df
+        final_result_container.subheader(atc)
+        final_result_container.dataframe(df)
+    final_result_container.markdown("""---""")
     #choose_medication_event(keyword)
     
 #全域變數集中區
@@ -64,14 +71,18 @@ result_egname_list=list()
 #以下開始streamlit語法
 st.title('國軍高雄總醫院左營分院')
 st.title('替代藥品查詢系統')
-st.write('手機使用，請點選左上角>符號，開啟側邊輸入藥品')
+#st.write('手機使用，請點選左上角>符號，開啟側邊輸入藥品')
 #側欄
-st.sidebar.title('替代藥品查詢系統')
-st.sidebar.write('查詢範圍：醫令碼、中英文商品名、學名')
-keyword=st.sidebar.text_input('請輸入關鍵字')
+#st.title('替代藥品查詢系統')
+st.write('查詢範圍：醫令碼、中英文商品名、學名')
+keyword=st.text_input('請輸入關鍵字')
+
+search_button=st.button('搜尋',type="primary")
+st.markdown("""---""")
+search_result_container=st.container()
+final_result_container=st.container()
+st.write('Design by 方志文 藥師')
 if keyword:
     search_event(keyword)
-search_button=st.sidebar.button('搜尋')
 if search_button:
     search_event(keyword)
-st.sidebar.write('Design by 方志文 藥師')
