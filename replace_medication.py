@@ -64,6 +64,7 @@ result_egname_list=list()
 #以下開始streamlit語法
 st.title('國軍高雄總醫院左營分院')
 st.title('替代藥品查詢系統')
+st.write('手機使用，請點選左上角>符號，開啟側邊輸入藥品')
 #側欄
 st.sidebar.title('替代藥品查詢系統')
 st.sidebar.write('查詢範圍：醫令碼、中英文商品名、學名')
