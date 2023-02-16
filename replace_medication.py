@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 def replace_same_form_atc(form, atc, origanal_diacode):
-    med_his=pd.read_pickle(r'files/his_med.pkl')
+    med_his=pd.read_pickle(r'his_med.pkl')
     mask_form=med_his['醫令碼'].str.startswith(form)==True
     mask_atc=med_his['ATC_CODE'].str.contains(str(atc))==True
     without_organal=med_his['醫令碼']!=origanal_diacode
@@ -20,7 +20,7 @@ def atc_class_med(form,atc,origanal_diacode):
     return class_dict
 
 def keyword_find(keyword):
-    med_his=pd.read_pickle(r'files/his_med.pkl')
+    med_his=pd.read_pickle(r'his_med.pkl')
     mask_diacaode=med_his['醫令碼'].str.upper().str.contains(str(keyword).upper())==True
     mask_chname=med_his['學名'].str.upper().str.contains(str(keyword).upper())==True
     mask_egname=med_his['商品名'].str.upper().str.contains(str(keyword).upper())==True
