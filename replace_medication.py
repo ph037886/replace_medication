@@ -34,7 +34,11 @@ def df_show(final_dict):
         df=df[df['DC_TYPE'].str.upper().str.contains('N')==True]
         df=df.drop(columns=['DC_TYPE'])
         final_result_container.header(atc)
-        final_result_container.dataframe(df.set_index('醫令碼'))
+        if df.empty==True:
+            final_result_container.warning('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品', icon="⚠️")
+            #final_result_container.write('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品')
+        else:
+            final_result_container.dataframe(df.set_index('醫令碼'))
 
 def search_event(keyword):
     global result_egname_list,search_result_container,final_result_container
