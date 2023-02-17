@@ -39,6 +39,8 @@ def search_event(keyword):
     elif len(result)==1:
         #print('只有一筆，直接查類似藥物')
         final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
+        final_result_container.header(result.iloc[0,2])
+        final_result_container.subheader('學名：'+result.iloc[0,1])
         for atc, df in final_dict.items():
             final_result_container.header(atc)
             final_result_container.dataframe(df)
@@ -59,6 +61,7 @@ def choose_medication_event(args):
     final_result_container.header(result_egname_list[args])
     result=keyword_find(keyword)
     result=result[args:args+1]
+    final_result_container.subheader('學名：'+result.iloc[0,1])
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     for atc, df in final_dict.items():
         final_result_container.subheader(atc)
@@ -69,6 +72,7 @@ def choose_medication_event(args):
 #全域變數集中區
 result_egname_list=list()
 #以下開始streamlit語法
+st.set_page_config(page_title='替代藥品查詢系統-國軍高雄總醫院左營分院',)
 st.title('國軍高雄總醫院左營分院')
 st.title('替代藥品查詢系統')
 #st.write('手機使用，請點選左上角>符號，開啟側邊輸入藥品')
