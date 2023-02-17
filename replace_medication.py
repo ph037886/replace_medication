@@ -1,6 +1,7 @@
 #python 3.10.8 64位元
 
 import streamlit as st
+import classification #code來源 https://github.com/topspinj/medcodes
 import pandas as pd
 
 def replace_same_form_atc(form, atc, origanal_diacode):
@@ -31,16 +32,30 @@ def keyword_find(keyword):
 def df_show(final_dict): #顯示結果的功能
     global search_result_container,final_result_container
     #資料來源是字典
+    full_atc=list(final_dict.keys())[0]
+    if len(full_atc)==7:
+        try:
+            atc_df=classification.atc_classification(full_atc)
+            atc_df=atc_df.sort_index(ascending=False)
+            atc_df=atc_df.fillna('')
+            atc_value_list=atc_df['description'].to_list()
+        except:
+            atc_value_list=['','','','','']
+    else:
+        atc_value_list=['','','','','']            
+    i=0
     for atc, df in final_dict.items():
         df=df[df['DC_TYPE'].str.upper().str.contains('N')==True] #有包含N的代表至少門急住有任意一個地方有開檔
         df=df.drop(columns=['DC_TYPE']) #刪掉不要欄位
         df=df[['醫令碼','商品名','中文名','學名','ATC_CODE','櫃位']]
         final_result_container.header(atc)
+        final_result_container.write(atc_value_list[i])
         if df.empty==True:
             final_result_container.warning('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品', icon="⚠️")
         else:
             final_result_container.dataframe(df.set_index('醫令碼')) #設定醫令碼為index，避免原始index被誤會為存量
-
+        i+=1
+        
 def search_event(keyword):
     global result_egname_list,search_result_container,final_result_container
     search_result_container.empty() #清空本來的container
