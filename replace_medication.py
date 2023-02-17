@@ -43,7 +43,7 @@ def search_event(keyword):
         final_result_container.subheader('學名：'+result.iloc[0,1])
         for atc, df in final_dict.items():
             final_result_container.header(atc)
-            final_result_container.dataframe(df)
+            final_result_container.dataframe(df.set_index('醫令碼'))
         final_result_container.markdown("""---""")
     elif len(result)>1:
         #print('多筆藥物，再做其他選擇')
@@ -65,7 +65,7 @@ def choose_medication_event(args):
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     for atc, df in final_dict.items():
         final_result_container.subheader(atc)
-        final_result_container.dataframe(df)
+        final_result_container.dataframe(df.set_index('醫令碼'))
     final_result_container.markdown("""---""")
     #choose_medication_event(keyword)
     
@@ -73,8 +73,8 @@ def choose_medication_event(args):
 result_egname_list=list()
 #以下開始streamlit語法
 st.set_page_config(page_title='替代藥品查詢系統-國軍高雄總醫院左營分院',)
-st.title('國軍高雄總醫院左營分院')
-st.title('替代藥品查詢系統')
+st.markdown('## 國軍高雄總醫院左營分院')
+st.markdown('### 替代藥品查詢系統')
 #st.write('手機使用，請點選左上角>符號，開啟側邊輸入藥品')
 #側欄
 #st.title('替代藥品查詢系統')
@@ -85,6 +85,7 @@ search_button=st.button('搜尋',type="primary")
 st.markdown("""---""")
 search_result_container=st.container()
 final_result_container=st.container()
+st.write('資料庫更新時間：'+open('update_time.txt','r').read())
 st.write('Design by 方志文 藥師')
 if keyword:
     search_event(keyword)
