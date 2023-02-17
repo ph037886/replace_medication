@@ -28,6 +28,14 @@ def keyword_find(keyword):
     result=med_his[mask_diacaode | mask_chname | mask_egname | mask_cname]
     return result
 
+def df_show(final_dict):
+    global search_result_container,final_result_container
+    for atc, df in final_dict.items():
+        df=df[df['DC_TYPE'].str.upper().str.contains('N')==True]
+        df=df.drop(columns=['DC_TYPE'])
+        final_result_container.header(atc)
+        final_result_container.dataframe(df.set_index('醫令碼'))
+
 def search_event(keyword):
     global result_egname_list,search_result_container,final_result_container
     search_result_container.empty()
@@ -41,9 +49,7 @@ def search_event(keyword):
         final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
         final_result_container.header(result.iloc[0,2])
         final_result_container.subheader('學名：'+result.iloc[0,1])
-        for atc, df in final_dict.items():
-            final_result_container.header(atc)
-            final_result_container.dataframe(df.set_index('醫令碼'))
+        df_show(final_dict)
         final_result_container.markdown("""---""")
     elif len(result)>1:
         #print('多筆藥物，再做其他選擇')
@@ -54,7 +60,7 @@ def search_event(keyword):
         for i in range(len(result_egname_list)):
             locals()['number'+str(i)] =search_result_container.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
         search_result_container.markdown("""---""")
-        
+
 def choose_medication_event(args):
     global final_result_container
     final_result_container.empty()
@@ -63,11 +69,8 @@ def choose_medication_event(args):
     result=result[args:args+1]
     final_result_container.subheader('學名：'+result.iloc[0,1])
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
-    for atc, df in final_dict.items():
-        final_result_container.subheader(atc)
-        final_result_container.dataframe(df.set_index('醫令碼'))
+    df_show(final_dict)
     final_result_container.markdown("""---""")
-    #choose_medication_event(keyword)
     
 #全域變數集中區
 result_egname_list=list()
@@ -83,8 +86,9 @@ keyword=st.text_input('請輸入關鍵字')
 
 search_button=st.button('搜尋',type="primary")
 st.markdown("""---""")
-search_result_container=st.container()
 final_result_container=st.container()
+search_result_container=st.container()
+
 st.write('資料庫更新時間：'+open('update_time.txt','r').read())
 st.write('Design by 方志文 藥師')
 if keyword:
