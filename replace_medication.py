@@ -2,7 +2,7 @@
 
 import streamlit as st
 import classification #code來源 https://github.com/topspinj/medcodes
-import googleSheet
+#import googleSheet
 import pandas as pd
 import datetime
 
@@ -104,7 +104,7 @@ def search_event(keyword):
         if len(result)==0:
             #print('查無資料')
             search_result_container.error('查無資料', icon="🤖")
-            record_to_google_sheet(keyword,'','')
+            #record_to_google_sheet(keyword,'','')
         elif len(result)==1:
             #print('只有一筆，直接查類似藥物')
             #直接把一筆的結果丟進去查，並呈現結果
@@ -114,7 +114,7 @@ def search_event(keyword):
             final_result_container.subheader('學名：'+result.iloc[0,1])
             df_show(final_dict)
             final_result_container.markdown("""---""")
-            record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
+            #record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
         elif len(result)>1:
             #print('多筆藥物，再做其他選擇')
             #把商品名做成按鈕，學名做成按鈕說明
@@ -138,7 +138,7 @@ def choose_medication_event(args):
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     df_show(final_dict)
     final_result_container.markdown("""---""")
-    record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
+    #record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
     
 #全域變數集中區
 result_egname_list=list()
