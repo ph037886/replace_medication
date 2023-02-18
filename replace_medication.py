@@ -68,30 +68,33 @@ def search_event(keyword):
     global result_egname_list,search_result_container,final_result_container
     search_result_container.empty() #清空本來的container
     final_result_container.empty()
-    result=keyword_find(keyword)
-    if len(result)==0:
-        #print('查無資料')
-        search_result_container.error('查無資料', icon="🤖")
-    elif len(result)==1:
-        #print('只有一筆，直接查類似藥物')
-        #直接把一筆的結果丟進去查，並呈現結果
-        final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
-        final_result_container.success('相同ATC code品項如下，結果不會顯示查詢藥物', icon="✅")
-        final_result_container.header(result.iloc[0,2])
-        final_result_container.subheader('學名：'+result.iloc[0,1])
-        df_show(final_dict)
-        final_result_container.markdown("""---""")
-    elif len(result)>1:
-        #print('多筆藥物，再做其他選擇')
-        #把商品名做成按鈕，學名做成按鈕說明
-        result=mark_dc_medication(result) #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
-        result_egname_list=result['商品名'].to_list()
-        result_chname_list=result['學名'].to_list()
-        search_result_container.info('查詢結果有多項藥品符合，請點選您要查詢的品項', icon="ℹ️") #提示文字
-        for i in range(len(result_egname_list)):
-            locals()['number'+str(i)] =search_result_container.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
-            #這邊的做法是，因為如果button用不指定變數的方式生成，button內的參數就不能傳遞，所以用local()去生成相同數目的變數
-        search_result_container.markdown("""---""")
+    if keyword=='':
+        search_result_container.error('未輸入任何關鍵字', icon="🚨")
+    else:
+        result=keyword_find(keyword)
+        if len(result)==0:
+            #print('查無資料')
+            search_result_container.error('查無資料', icon="🤖")
+        elif len(result)==1:
+            #print('只有一筆，直接查類似藥物')
+            #直接把一筆的結果丟進去查，並呈現結果
+            final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
+            final_result_container.success('相同ATC code品項如下，結果不會顯示查詢藥物', icon="✅")
+            final_result_container.header(result.iloc[0,2])
+            final_result_container.subheader('學名：'+result.iloc[0,1])
+            df_show(final_dict)
+            final_result_container.markdown("""---""")
+        elif len(result)>1:
+            #print('多筆藥物，再做其他選擇')
+            #把商品名做成按鈕，學名做成按鈕說明
+            result=mark_dc_medication(result) #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
+            result_egname_list=result['商品名'].to_list()
+            result_chname_list=result['學名'].to_list()
+            search_result_container.info('查詢結果有多項藥品符合，請點選您要查詢的品項', icon="ℹ️") #提示文字
+            for i in range(len(result_egname_list)):
+                locals()['number'+str(i)] =search_result_container.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
+                #這邊的做法是，因為如果button用不指定變數的方式生成，button內的參數就不能傳遞，所以用local()去生成相同數目的變數
+            search_result_container.markdown("""---""")
 
 def choose_medication_event(args):
     global final_result_container
