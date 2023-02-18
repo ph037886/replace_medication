@@ -2,7 +2,10 @@
 
 import streamlit as st
 import classification #code來源 https://github.com/topspinj/medcodes
+import googleSheet
 import pandas as pd
+import datetime
+
 
 def replace_same_form_atc(form, atc, origanal_diacode):
     med_his=pd.read_pickle(r'his_med.pkl')
@@ -29,6 +32,32 @@ def keyword_find(keyword):
     result=med_his[mask_diacaode | mask_chname | mask_egname | mask_cname] #用or混合查詢
     return result
 
+def record_to_google_sheet(keyword,origanal_diacode,final_dict):
+    def nothing_result(keyword,columns_name):
+        _dict={'keyword':[keyword],
+               'origanal_diacode':['查無資料']}
+        temp=pd.DataFrame.from_dict(_dict)
+        temp['time_code']=str(datetime.datetime.now())
+        record=pd.DataFrame(columns=columns_name)
+        record=pd.concat([record,temp])
+        return record
+    def success_search(keyword,origanal_diacode,final_dict,columns_name):
+        result_list=[keyword,origanal_diacode]
+        for key,value in final_dict.items():
+            result_list.append(key)
+            result_list.append(len(value['醫令碼'].to_list()))
+        result_list.append(str(datetime.datetime.now()))
+        record=pd.DataFrame([result_list],columns=columns_name)
+        return record
+    columns_name=['keyword','origanal_diacode','ATC_7','ATC_7R','ATC_5','ATC_5R','ATC_4','ATC_4R','ATC_3','ATC_3R','ATC_1','ATC_1R','time_code']
+    if origanal_diacode=='':
+        record=nothing_result(keyword,columns_name)
+    else:
+        record=success_search(keyword,origanal_diacode,final_dict,columns_name)
+    record=record.fillna('')
+    print(record)
+    googleSheet.append_sheet(record)
+    
 def df_show(final_dict): #顯示結果的功能
     global search_result_container,final_result_container
     #資料來源是字典
@@ -75,6 +104,7 @@ def search_event(keyword):
         if len(result)==0:
             #print('查無資料')
             search_result_container.error('查無資料', icon="🤖")
+            record_to_google_sheet(keyword,'','')
         elif len(result)==1:
             #print('只有一筆，直接查類似藥物')
             #直接把一筆的結果丟進去查，並呈現結果
@@ -84,6 +114,7 @@ def search_event(keyword):
             final_result_container.subheader('學名：'+result.iloc[0,1])
             df_show(final_dict)
             final_result_container.markdown("""---""")
+            record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
         elif len(result)>1:
             #print('多筆藥物，再做其他選擇')
             #把商品名做成按鈕，學名做成按鈕說明
@@ -107,6 +138,7 @@ def choose_medication_event(args):
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     df_show(final_dict)
     final_result_container.markdown("""---""")
+    record_to_google_sheet(keyword,result.iloc[0,0],final_dict)
     
 #全域變數集中區
 result_egname_list=list()
