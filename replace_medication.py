@@ -81,6 +81,7 @@ def search_event(keyword):
         search_result_container.info('查詢結果有多項藥品符合，請點選您要查詢的品項', icon="ℹ️") #提示文字
         for i in range(len(result_egname_list)):
             locals()['number'+str(i)] =search_result_container.button(result_egname_list[i],key=i,help=result_chname_list[i],on_click=choose_medication_event,args=(i,))
+            #這邊的做法是，因為如果button用不指定變數的方式生成，button內的參數就不能傳遞，所以用local()去生成相同數目的變數
         search_result_container.markdown("""---""")
 
 def choose_medication_event(args):
