@@ -59,7 +59,7 @@ def df_show(final_dict): #顯示結果的功能
 def mark_dc_medication(result): #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
     def apply_dc(row):
         if 'N' not in row['DC_TYPE'].upper():
-            row['商品名']='(已鎖檔)'+row['商品名']
+            row['商品名']='🚫已鎖檔🚫  '+row['商品名']
         return row
     result=result.apply(apply_dc,axis=1)
     return result    
