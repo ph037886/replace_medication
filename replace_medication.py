@@ -56,7 +56,7 @@ def df_show(final_dict): #顯示結果的功能
             final_result_container.dataframe(df.set_index('醫令碼')) #設定醫令碼為index，避免原始index被誤會為存量
         i+=1
 
-def mark_dc_medication(result):
+def mark_dc_medication(result): #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
     def apply_dc(row):
         if 'N' not in row['DC_TYPE'].upper():
             row['商品名']='(已鎖檔)'+row['商品名']
@@ -84,7 +84,7 @@ def search_event(keyword):
     elif len(result)>1:
         #print('多筆藥物，再做其他選擇')
         #把商品名做成按鈕，學名做成按鈕說明
-        result=mark_dc_medication(result)
+        result=mark_dc_medication(result) #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
         result_egname_list=result['商品名'].to_list()
         result_chname_list=result['學名'].to_list()
         search_result_container.info('查詢結果有多項藥品符合，請點選您要查詢的品項', icon="ℹ️") #提示文字
