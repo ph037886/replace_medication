@@ -56,10 +56,13 @@ def record_to_deta(keyword,origanal_diacode,final_dict):
     else:
         record=success_search(keyword,origanal_diacode,final_dict,columns_name)
     record=record.fillna('') #上傳資料有NA可能會出錯
-    #Deta資料庫的連線方式
-    deta = Deta(st.secrets['DB_TOKEN'])
-    db = deta.Base("replace_medication")
-    db.put(record.to_dict('index')[0]) #Deta put資料的方式是用字典
+    try: #加入try，如果資料庫出問題，程式功能不會喪失
+        #Deta資料庫的連線方式
+        deta = Deta(st.secrets['DB_TOKEN'])
+        db = deta.Base("replace_medication")
+        db.put(record.to_dict('index')[0]) #Deta put資料的方式是用字典
+    except:
+        pass
     
 def df_show(final_dict): #顯示結果的功能
     global search_result_container,final_result_container
