@@ -1,5 +1,10 @@
 # replace_medication
 
+更新日誌：
+2023-02-20 新增查詢結果記錄在資料庫功能，使用deta資料庫，record_to_deta()
+
+---
+
 鑒於近期 (2023-02-15)缺藥問題嚴重，長期被問有甚麼替代品項可以使用，單純靠醫院的藥物辨識系統執行起來略微複雜，設計可以查詢替代藥品的程式
 
 本程式有串接streamlit，https://ph037886-replace-medication-replace-medication-oykc19.streamlit.app/
@@ -8,8 +13,9 @@
 1. 抓取系統所有曾經有的藥物，無論是否還在使用，製成藥品資料庫，並產生檔案更新日期
 2. 混合查詢醫令碼、中文商品名、英文商品名、學名，查詢院內是否曾經有此藥物，有的話將這些藥物列出來，製成streamlit的按鈕。(keyword_find())
 3. 點選後，會將被選擇的藥品的Atc code，一層一層拆開，並與資料庫內的資料比較，將每一層的Atc code當key，搜尋出來的df當value。atc_class_med()
-4. 呈現在streamlit上
-5. 後續只需定期將檔案更新到github上面即可
+4. 查詢出來的結果，紀錄查詢關鍵字，每一層的ATC code，各有幾項可以替代的藥物。df轉dict，配合deta的傳輸方式
+5. 呈現在streamlit上
+6. 後續只需定期將檔案更新到github上面即可
 
 ## 待解問題
 主要都是介面問題，對streamlit尚不熟悉，很多功能都還不會用
@@ -35,3 +41,4 @@
 4. 其他部分就是註冊streamlit與串接github
    主要是參考這篇 https://ithelp.ithome.com.tw/articles/10298666
    比較不一樣的地方是requirements.txt，一開始用conda或pip匯出，都會出錯，後來接用pip install的方法做，就很簡單了，當正常方式安裝
+5. Deta資料庫連結方式用try去做，即使沒有使用deta也不影響使用
