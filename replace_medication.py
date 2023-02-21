@@ -46,7 +46,8 @@ def record_to_deta(keyword,origanal_diacode,final_dict):
         result_list=[keyword,origanal_diacode]
         for key,value in final_dict.items():
             result_list.append(key)
-            result_list.append(len(value['醫令碼'].to_list()))
+            #result_list.append(len(value['醫令碼'].to_list()))
+            result_list.append(value['醫令碼'].to_list())
         result_list.append(str(datetime.datetime.now()))
         record=pd.DataFrame([result_list],columns=columns_name)
         return record
