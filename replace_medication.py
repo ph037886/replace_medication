@@ -114,6 +114,7 @@ def search_event(keyword):
         elif len(result)==1:
             #print('只有一筆，直接查類似藥物')
             #直接把一筆的結果丟進去查，並呈現結果
+            result=mark_dc_medication(result)
             final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
             final_result_container.success('相同ATC code品項如下，結果不會顯示查詢藥物', icon="✅")
             final_result_container.header(result.iloc[0,2])
