@@ -163,7 +163,7 @@ st.markdown("""---""")
 final_result_container=st.container()
 search_result_container=st.container()
 
-st.write('資料庫更新時間：'+open('update_time.txt','r').read())
+st.write('品項表資料庫更新時間：'+open('update_time.txt','r').read())
 st.write('Design by 方志文 藥師')
 if keyword:
     search_event(keyword)
