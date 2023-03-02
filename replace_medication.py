@@ -49,7 +49,7 @@ def record_to_deta(keyword,origanal_diacode,final_dict):
             #result_list.append(len(value['醫令碼'].to_list()))
             value=value[value['DC_TYPE'].str.upper().str.contains('N')==True] #有包含N的代表至少門急住有任意一個地方有開檔
             result_list.append(value['醫令碼'].to_list())
-        result_list.append(str(datetime.datetime.now()))
+        result_list.append(str(datetime.datetime.now())) #streamlit在伺服器上面，紀錄的時間是格林威治時間，也就是英文倫敦的時間，換成台灣的話要+8
         record=pd.DataFrame([result_list],columns=columns_name)
         return record
     columns_name=['keyword','origanal_diacode','ATC_7','ATC_7R','ATC_5','ATC_5R','ATC_4','ATC_4R','ATC_3','ATC_3R','ATC_1','ATC_1R','time_code']
