@@ -84,7 +84,7 @@ def df_show(final_dict): #顯示結果的功能
     for atc, df in final_dict.items():
         df=df[df['DC_TYPE'].str.upper().str.contains('N')==True] #有包含N的代表至少門急住有任意一個地方有開檔
         df=df.drop(columns=['DC_TYPE']) #刪掉不要欄位
-        df=df[['醫令碼','商品名','中文名','學名','ATC_CODE','櫃位']]
+        df=df[['醫令碼','商品名','中文名','學名','ATC_CODE','櫃位','盈餘比']]
         final_result_container.header(atc)
         final_result_container.write(atc_value_list[i])
         if df.empty==True:
