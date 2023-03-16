@@ -5,6 +5,7 @@ import classification #code來源 https://github.com/topspinj/medcodes
 #import googleSheet
 import pandas as pd
 import datetime
+from functools import partial
 from deta import Deta
 
 
@@ -66,8 +67,14 @@ def record_to_deta(keyword,origanal_diacode,final_dict):
     except:
         pass
     
-def df_show(final_dict): #顯示結果的功能
+def df_show(final_dict,eol): #顯示結果的功能
     global search_result_container,final_result_container
+    def rating_highlight(val,eol):
+        try:
+            color = 'yellow' if float(val[:-1]) > eol else ''
+        except:
+            color=''
+        return f'background-color: {color}'
     #資料來源是字典
     full_atc=list(final_dict.keys())[0]
     if len(full_atc)==7:
@@ -85,12 +92,13 @@ def df_show(final_dict): #顯示結果的功能
         df=df[df['DC_TYPE'].str.upper().str.contains('N')==True] #有包含N的代表至少門急住有任意一個地方有開檔
         df=df.drop(columns=['DC_TYPE']) #刪掉不要欄位
         df=df[['醫令碼','商品名','中文名','學名','ATC_CODE','櫃位','盈餘比']]
+        highlight_func = partial(rating_highlight, eol=float(eol[:-1]))
         final_result_container.header(atc)
         final_result_container.write(atc_value_list[i])
         if df.empty==True:
             final_result_container.warning('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品', icon="⚠️")
         else:
-            final_result_container.dataframe(df.set_index('醫令碼')) #設定醫令碼為index，避免原始index被誤會為存量
+            final_result_container.dataframe(df.set_index('醫令碼').style.applymap(highlight_func, subset=pd.IndexSlice[:, ['盈餘比']])) #設定醫令碼為index，避免原始index被誤會為存量
         i+=1
 
 def mark_dc_medication(result): #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
@@ -121,7 +129,7 @@ def search_event(keyword):
             final_result_container.success('相同ATC code品項如下，結果不會顯示查詢藥物', icon="✅")
             final_result_container.header(result.iloc[0,2])
             final_result_container.subheader('學名：'+result.iloc[0,1])
-            df_show(final_dict)
+            df_show(final_dict,result.iloc[0,8])
             final_result_container.markdown("""---""")
             record_to_deta(keyword,result.iloc[0,0],final_dict)
         elif len(result)>1:
@@ -145,7 +153,7 @@ def choose_medication_event(args):
     result=result[args:args+1]
     final_result_container.subheader('學名：'+result.iloc[0,1])
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
-    df_show(final_dict)
+    df_show(final_dict,result.iloc[0,8])
     final_result_container.markdown("""---""")
     record_to_deta(keyword,result.iloc[0,0],final_dict)
     
@@ -165,7 +173,7 @@ final_result_container=st.container()
 search_result_container=st.container()
 
 st.write('品項表資料庫更新時間：'+open('update_time.txt','r').read())
-st.write('Design by 方志文 藥師')
+st.write('Design by 臨床藥劑科 方志文 藥師')
 if keyword:
     search_event(keyword)
 if search_button:
