@@ -69,12 +69,13 @@ def record_to_deta(keyword,origanal_diacode,final_dict):
     
 def df_show(final_dict,eol): #顯示結果的功能
     global search_result_container,final_result_container
-    def rating_highlight(val,eol):
+    def rating_highlight(val,eol): #pandas填底色功能，比較查詢藥物盈餘比是否比替代藥物低
         try:
-            color = 'yellow' if float(val[:-1]) > eol else ''
+            color = 'yellow' if float(val[:-1]) > eol else '' #資料來源的盈餘比已經轉成%格式，type會是str，先把%去除再轉成float
         except:
             color=''
         return f'background-color: {color}'
+    highlight_func = partial(rating_highlight, eol=float(eol[:-1])) #pandas填色用正常的方式不能傳遞參數，使用partial的函式把參數綁進去
     #資料來源是字典
     full_atc=list(final_dict.keys())[0]
     if len(full_atc)==7:
@@ -92,13 +93,15 @@ def df_show(final_dict,eol): #顯示結果的功能
         df=df[df['DC_TYPE'].str.upper().str.contains('N')==True] #有包含N的代表至少門急住有任意一個地方有開檔
         df=df.drop(columns=['DC_TYPE']) #刪掉不要欄位
         df=df[['醫令碼','商品名','中文名','學名','ATC_CODE','櫃位','盈餘比']]
-        highlight_func = partial(rating_highlight, eol=float(eol[:-1]))
         final_result_container.header(atc)
         final_result_container.write(atc_value_list[i])
         if df.empty==True:
             final_result_container.warning('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品', icon="⚠️")
         else:
-            final_result_container.dataframe(df.set_index('醫令碼').style.applymap(highlight_func, subset=pd.IndexSlice[:, ['盈餘比']])) #設定醫令碼為index，避免原始index被誤會為存量
+            st.info('盈餘比標示黃色，表示該品項盈餘比大於查詢品項')
+            final_result_container.dataframe(df.set_index('醫令碼').style.applymap(highlight_func, subset=pd.IndexSlice[:, ['盈餘比']])) 
+            #設定醫令碼為index，避免原始index被誤會為存量
+            #增加pandas用盈餘比填底色的功能
         i+=1
 
 def mark_dc_medication(result): #如果遇到檔案已鎖檔，在商品名最前面加上已鎖檔
