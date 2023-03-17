@@ -98,7 +98,7 @@ def df_show(final_dict,eol): #顯示結果的功能
         if df.empty==True:
             final_result_container.warning('本ATC code階層，本院目前無相同ATC code藥品，請找更後面階層藥品', icon="⚠️")
         else:
-            st.info('盈餘比標示黃色，表示該品項盈餘比大於查詢品項')
+            final_result_container.info('盈餘比標示黃色，表示該品項盈餘比大於查詢品項')
             final_result_container.dataframe(df.set_index('醫令碼').style.applymap(highlight_func, subset=pd.IndexSlice[:, ['盈餘比']])) 
             #設定醫令碼為index，避免原始index被誤會為存量
             #增加pandas用盈餘比填底色的功能
