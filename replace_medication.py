@@ -31,7 +31,9 @@ def keyword_find(keyword):
     mask_chname=med_his['學名'].str.upper().str.contains(str(keyword).upper())==True
     mask_egname=med_his['商品名'].str.upper().str.contains(str(keyword).upper())==True
     mask_cname=med_his['中文名'].str.upper().str.contains(str(keyword).upper())==True
-    result=med_his[mask_diacaode | mask_chname | mask_egname | mask_cname] #用or混合查詢
+    mask_cname=med_his['中文名'].str.upper().str.contains(str(keyword).upper())==True
+    mask_atccode=med_his['ATC_CODE'].str.upper().str.startswith(str(keyword).upper())==True #atc code用startwith，以免查到英文字數字組合在中間相同的
+    result=med_his[mask_diacaode | mask_chname | mask_egname | mask_cname | mask_atccode] #用or混合查詢
     return result
 
 def record_to_deta(keyword,origanal_diacode,final_dict):
@@ -168,7 +170,7 @@ st.markdown('## 國軍高雄總醫院左營分院') #用markdown可以讓title�
 st.markdown('### 替代藥品查詢系統')
 
 #以下開始功能區
-st.write('查詢範圍：醫令碼、中英文商品名、學名')
+st.write('查詢範圍：醫令碼、中英文商品名、學名、ATC code')
 keyword=st.text_input('請輸入關鍵字')
 search_button=st.button('搜尋',type="primary")
 st.markdown("""---""")
