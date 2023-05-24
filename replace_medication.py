@@ -134,6 +134,7 @@ def search_event(keyword):
             final_result_container.success('相同ATC code品項如下，結果不會顯示查詢藥物', icon="✅")
             final_result_container.header(result.iloc[0,2])
             final_result_container.subheader('學名：'+result.iloc[0,1])
+            final_result_container.subheader('櫃位：'+result.iloc[0,5])
             df_show(final_dict,result.iloc[0,8])
             final_result_container.markdown("""---""")
             record_to_deta(keyword,result.iloc[0,0],final_dict)
@@ -157,6 +158,7 @@ def choose_medication_event(args):
     result=keyword_find(keyword)
     result=result[args:args+1]
     final_result_container.subheader('學名：'+result.iloc[0,1])
+    final_result_container.subheader('櫃位：'+result.iloc[0,5])    
     final_dict=atc_class_med(result.iloc[0,0][:1],result.iloc[0,4],result.iloc[0,0])
     df_show(final_dict,result.iloc[0,8])
     final_result_container.markdown("""---""")
