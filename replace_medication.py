@@ -8,6 +8,22 @@ import datetime
 from functools import partial
 from deta import Deta
 
+def collect_data(): #把資料抓下來轉dataframe
+    #連接資料庫
+    deta = Deta(st.secrets['DB_TOKEN'])
+    db = deta.Base("replace_medication")
+    #把所有資料抓下來
+    res = db.fetch()
+    all_items = res.items
+    while res.last:
+        res = db.fetch(last=res.last)
+        all_items += res.items
+    #抓下來的資料是一個list，裡面有dict，這邊把資料轉成dataframe
+    df = pd.DataFrame()
+    # 將每個字典加入 DataFrame
+    for item in all_items:
+        df = df.append(item, ignore_index=True)
+    df['time_code'] = pd.to_datetime(df['time_code']) #最後一行是查詢時間，資料庫出來會是str，轉成datetime
 
 def replace_same_form_atc(form, atc, origanal_diacode):
     med_his=pd.read_pickle(r'his_med.pkl')
