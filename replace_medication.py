@@ -92,9 +92,11 @@ def df_show(final_dict,eol): #顯示結果的功能
     def rating_highlight(val,eol): #pandas填底色功能，比較查詢藥物盈餘比是否比替代藥物低
         try:
             color = 'yellow' if float(val[:-1]) > eol else '' #資料來源的盈餘比已經轉成%格式，type會是str，先把%去除再轉成float
+            font_color = 'black' if float(val[:-1]) > eol else ''             
         except:
             color=''
-        return f'background-color: {color}'
+            font_color=''        
+        return f'background-color: {color}; color:{font_color}'
     highlight_func = partial(rating_highlight, eol=float(eol[:-1])) #pandas填色用正常的方式不能傳遞參數，使用partial的函式把參數綁進去
     #資料來源是字典
     full_atc=list(final_dict.keys())[0]
