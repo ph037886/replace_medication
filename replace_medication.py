@@ -187,8 +187,8 @@ def choose_medication_event(args):
 #全域變數集中區
 result_egname_list=list()
 #以下開始streamlit語法
-st.set_page_config(page_title='替代藥品查詢系統-國軍高雄總醫院左營分院',layout="wide") #修改網頁title，並預設為寬廣模式
-st.markdown('## 國軍高雄總醫院左營分院') #用markdown可以讓title變得比較小，比較好看
+st.set_page_config(page_title='替代藥品查詢系統-國軍左營總醫院',layout="wide") #修改網頁title，並預設為寬廣模式
+st.markdown('## 國軍左營總醫院') #用markdown可以讓title變得比較小，比較好看
 st.markdown('### 替代藥品查詢系統')
 
 #以下開始功能區
