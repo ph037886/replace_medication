@@ -29,7 +29,7 @@ def replace_same_form_atc(form, atc, origanal_diacode):
     med_his=pd.read_pickle(r'his_med.pkl')
     med_his=med_his.fillna('') #把空值插入''，避免錯誤
     mask_form=med_his['醫令碼'].str.startswith(form)==True #只查同劑型分類的
-    mask_atc=med_his['ATC_CODE'].str.startswith(str(atc))==True #ATC code有包含的
+    mask_atc=med_his['ATC_CODE'].str.startswith(str(atc))==True #ATC code前幾碼相同
     without_organal=med_his['醫令碼']!=origanal_diacode #排除查詢藥品自己
     replace=med_his[mask_atc & mask_form & without_organal]
     return replace
